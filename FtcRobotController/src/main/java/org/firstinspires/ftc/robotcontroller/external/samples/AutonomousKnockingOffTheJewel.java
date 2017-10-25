@@ -92,6 +92,7 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
 
         robot.westMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.eastMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.northMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         robot.westMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.eastMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -139,17 +140,17 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
             // Determine new target position, and pass to motor controller
             newLeftTarget = robot.westMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newRightTarget = robot.eastMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            robot.leftDrive.setTargetPosition(newLeftTarget);
-            robot.rightDrive.setTargetPosition(newRightTarget);
+            robot.westMotor.setTargetPosition(newLeftTarget);
+            robot.eastMotor.setTargetPosition(newRightTarget);
 
             // Turn On RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.westMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.eastMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.leftDrive.setPower(Math.abs(speed));
-            robot.rightDrive.setPower(Math.abs(speed));
+            robot.westMotor.setPower(Math.abs(speed));
+            robot.eastMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -159,23 +160,23 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+                   (robot.westMotor.isBusy() && robot.eastMotor.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.leftDrive.getCurrentPosition(),
-                                            robot.rightDrive.getCurrentPosition());
+                                            robot.westMotor.getCurrentPosition(),
+                                            robot.eastMotor.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            robot.leftDrive.setPower(0);
-            robot.rightDrive.setPower(0);
+            robot.westMotor.setPower(0);
+            robot.eastMotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.westMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.eastMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
