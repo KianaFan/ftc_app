@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -55,9 +56,14 @@ public class HardwarePushbot
     /* Public OpMode members. */
     public DcMotor  westMotor   = null;
     public DcMotor  eastMotor  = null;
+    public DcMotor  northMotor = null;
+    public DcMotor  southMotor = null;
+    public DcMotor  xMotor = null;
+    public DcMotor  yMotor = null;
     public DcMotor  leftArm     = null;
     public Servo    leftClaw    = null;
     public Servo    rightClaw   = null;
+    public ColorSensor  colorSensor = null;
 
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -78,22 +84,36 @@ public class HardwarePushbot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        westMotor  = hwMap.get(DcMotor.class, "left_drive");
-        eastMotor = hwMap.get(DcMotor.class, "right_drive");
-        leftArm    = hwMap.get(DcMotor.class, "left_arm");
+        westMotor  = hwMap.get(DcMotor.class, "forward_drive");
+        eastMotor = hwMap.get(DcMotor.class, "backward_drive");
+        northMotor = hwMap.get(DcMotor.class, "right_drive");
+        southMotor = hwMap.get(DcMotor.class, "left_drive");
+        xMotor = hwMap.get(DcMotor.class, "horizontal_rackandpinion");
+        yMotor = hwMap.get(DcMotor.class, "vertical_rackandpinion");
+
         westMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         eastMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        northMotor.setDirection(DcMotor.Direction.FORWARD);
+        southMotor.setDirection(DcMotor.Direction.REVERSE);
+        xMotor.setDirection(DcMotor.Direction.FORWARD);
+        yMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         westMotor.setPower(0);
         eastMotor.setPower(0);
-        leftArm.setPower(0);
+        northMotor.setPower(0);
+        southMotor.setPower(0);
+        xMotor.setPower(0);
+        yMotor.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         westMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         eastMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        northMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        southMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        xMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        yMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
         leftClaw  = hwMap.get(Servo.class, "left_hand");

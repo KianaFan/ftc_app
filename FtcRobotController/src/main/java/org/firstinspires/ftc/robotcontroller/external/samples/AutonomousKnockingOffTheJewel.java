@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -93,14 +94,22 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
         robot.westMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.eastMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.northMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.southMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         robot.westMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.eastMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.northMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.southMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        ColorSensor color_sensor;
+        color_sensor = hardwareMap.colorSensor.get("color");
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d",
                           robot.westMotor.getCurrentPosition(),
                           robot.eastMotor.getCurrentPosition());
+                          robot.northMotor.getCurrentPosition();
+                          robot.southMotor.getCurrentPosition();
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -108,12 +117,19 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED,  0,  0,  8, -8, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
 
-        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-        robot.rightClaw.setPosition(0.0);
+        if (color_sensor.red() > 5){
+            robot.leftClaw.setPosition(1.0);
+        }
+
+        else {
+            robot.leftClaw.setPosition(-1.0);
+        }
+        encoderDrive(TURN_SPEED,   0, 0, 0, 0, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+
+        //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+        //robot.rightClaw.setPosition(0.0);
         sleep(1000);     // pause for servos to move
 
         telemetry.addData("Path", "Complete");
@@ -129,28 +145,39 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
      *  3) Driver stops the opmode running.
      */
     public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
+                             double forwardInches, double backwardInches, double rightInches, double leftInches,
                              double timeoutS) {
-        int newLeftTarget;
+        int newForwardTarget;
+        int newBackwardTarget;
         int newRightTarget;
+        int newLeftTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.westMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.eastMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            robot.westMotor.setTargetPosition(newLeftTarget);
-            robot.eastMotor.setTargetPosition(newRightTarget);
+            newForwardTarget = robot.westMotor.getCurrentPosition() + (int)(forwardInches * COUNTS_PER_INCH);
+            newBackwardTarget = robot.eastMotor.getCurrentPosition() + (int)(backwardInches * COUNTS_PER_INCH);
+            newRightTarget = robot.northMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = robot.southMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+
+            robot.westMotor.setTargetPosition(newForwardTarget);
+            robot.eastMotor.setTargetPosition(newBackwardTarget);
+            robot.northMotor.setTargetPosition(newRightTarget);
+            robot.southMotor.setTargetPosition(newLeftTarget);
 
             // Turn On RUN_TO_POSITION
             robot.westMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.eastMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.northMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.southMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
             robot.westMotor.setPower(Math.abs(speed));
             robot.eastMotor.setPower(Math.abs(speed));
+            robot.northMotor.setPower(Math.abs(speed));
+            robot.southMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -160,23 +187,29 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (robot.westMotor.isBusy() && robot.eastMotor.isBusy())) {
+                   (robot.westMotor.isBusy() && robot.eastMotor.isBusy() && robot.northMotor.isBusy() && robot.southMotor.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path1",  "Running to %7d :%7d", newForwardTarget,  newBackwardTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.westMotor.getCurrentPosition(),
-                                            robot.eastMotor.getCurrentPosition());
+                                            robot.westMotor.getCurrentPosition());
+                                            robot.eastMotor.getCurrentPosition();
+                                            robot.northMotor.getCurrentPosition();
+                                            robot.southMotor.getCurrentPosition();
                 telemetry.update();
             }
 
             // Stop all motion;
             robot.westMotor.setPower(0);
             robot.eastMotor.setPower(0);
+            robot.northMotor.setPower(0);
+            robot.southMotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
             robot.westMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.eastMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.northMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.southMotor.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
 
             //  sleep(250);   // optional pause after each move
         }

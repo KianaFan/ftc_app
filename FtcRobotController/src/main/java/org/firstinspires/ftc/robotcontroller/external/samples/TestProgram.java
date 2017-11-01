@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -63,7 +61,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 //@Disabled
-public class AutonomousKnockingOffTheJewel extends LinearOpMode {
+public class TestProgram extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
@@ -114,10 +112,7 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         encoderDrive(DRIVE_SPEED,  0,  0,  8, -8, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        //if Color Sensor?){
-
-       // }
-        encoderDrive(TURN_SPEED,   0, 0, 0, 0, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(TURN_SPEED, 5, 5, 5, 5, 5.0);
 
         //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
         //robot.rightClaw.setPosition(0.0);
