@@ -117,14 +117,16 @@ public class AutonomousKnockingOffTheJewel extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  0,  0,  8, -8, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        robot.leftClaw.setPosition(0.0);
+        encoderDrive(DRIVE_SPEED,  0,  0,  8, 8, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
 
         if (color_sensor.red() > 5){
             robot.leftClaw.setPosition(1.0);
         }
 
         else {
-            robot.leftClaw.setPosition(-1.0);
+            encoderDrive(DRIVE_SPEED, 1, 1, 0, 0, 3.0);
+            robot.leftClaw.setPosition(1.0);
         }
         encoderDrive(TURN_SPEED,   0, 0, 0, 0, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
 

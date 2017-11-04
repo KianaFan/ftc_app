@@ -84,10 +84,10 @@ public class HardwarePushbot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        westMotor  = hwMap.get(DcMotor.class, "forward_drive");
-        eastMotor = hwMap.get(DcMotor.class, "backward_drive");
-        northMotor = hwMap.get(DcMotor.class, "right_drive");
-        southMotor = hwMap.get(DcMotor.class, "left_drive");
+        westMotor  = hwMap.get(DcMotor.class, "westMotor");
+        eastMotor = hwMap.get(DcMotor.class, "eastMotor");
+        northMotor = hwMap.get(DcMotor.class, "northMotor");
+        southMotor = hwMap.get(DcMotor.class, "southMotor");
         xMotor = hwMap.get(DcMotor.class, "horizontal_rackandpinion");
         yMotor = hwMap.get(DcMotor.class, "vertical_rackandpinion");
 
