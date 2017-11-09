@@ -91,10 +91,10 @@ public class HardwareJohnny
         xMotor = hwMap.get(DcMotor.class, "horizontal_rackandpinion");
         yMotor = hwMap.get(DcMotor.class, "vertical_rackandpinion");
 
-        westMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        westMotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         eastMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         northMotor.setDirection(DcMotor.Direction.FORWARD);
-        southMotor.setDirection(DcMotor.Direction.REVERSE);
+        southMotor.setDirection(DcMotor.Direction.FORWARD);
         xMotor.setDirection(DcMotor.Direction.FORWARD);
         yMotor.setDirection(DcMotor.Direction.FORWARD);
 
